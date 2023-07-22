@@ -16,4 +16,5 @@ jobs:
         run: date
       - name: Directory content
         run: ls -l
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/render-deploy
