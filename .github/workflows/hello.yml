@@ -18,3 +18,6 @@ jobs:
         run: ls -l
       - uses: actions/checkout@v3
       - uses: ./.github/actions/render-deploy
+        with:
+          render-service-id: ${{ secrets.ACTION_TESTI_SECRET }}
+          render-api-key: ${{ secrets.ACTION_TESTI_SECRET }}
