@@ -7,6 +7,7 @@ on:
 
 jobs:
   simple_deployment_pipeline:
+    name: Build and test Pokedex app
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -27,3 +28,13 @@ jobs:
           command: npm run test:e2e
           start: npm run start-prod
           wait-on: http://localhost:5000
+  deploy_to_render:
+    runs-on: ubuntu-20.04
+    name: Deploy to Render
+    needs: simple_deployment_pipeline
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/render-deploy
+        with:
+          render-service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          render-api-key: ${{ secrets.RENDER_API_KEY }}
