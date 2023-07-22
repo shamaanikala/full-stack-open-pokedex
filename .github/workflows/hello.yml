@@ -16,4 +16,4 @@ jobs:
         run: date
       - name: Directory content
         run: ls -l
-      - uses: ./.github/workflows/render-deploy
+      - uses: ./.github/actions/render-deploy
