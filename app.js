@@ -5,7 +5,11 @@ const app = express()
 const PORT = process.env.PORT || 5000
 
 app.get('/version', (req, res) => {
-  res.send('1') // change to ensure new version deploy
+  res.send('1.1') // change to ensure new version deploy
+})
+
+app.get('/health', (req, res) => {
+  res.send('ok')
 })
 
 app.use(express.static('dist'))
