@@ -3,8 +3,11 @@ name: Testing stuff
 on:
   push:
     branches:
-      # - main
+      - master
       - 'Ex11.16-testing'
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize]
 
 jobs:
   a_test_job:
