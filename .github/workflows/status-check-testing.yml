@@ -24,3 +24,12 @@ jobs:
     steps:
       - name: Echo if last steps were succesful
         run: echo "Previous job was succesful!"
+
+  output_actor:
+    name: Outputs the github.actor
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read and echo the username of user who triggered this workflow
+        env:
+          ACTOR_USERNAME: ${{ github.actor }}
+        run: echo $ACTOR_USERNAME
