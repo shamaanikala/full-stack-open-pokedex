@@ -33,4 +33,4 @@ jobs:
       - name: 'check contains #skip'
         env:
           SKIP_CHECK: ${{ contains(join(toJson(github.event.commits.*.message)), '#skip') }}
-        run: echo Commit messages contain \#skip:"$SKIP_CHECK"
+        run: echo "Commit messages contain \#skip:${SKIP_CHECK}"
