@@ -33,3 +33,16 @@ jobs:
         env:
           ACTOR_USERNAME: ${{ github.actor }}
         run: echo $ACTOR_USERNAME
+      - name: Compare to GITHUB_ACTOR
+        run: echo $GITHUB_ACTOR
+
+  output_pusher_information:
+    name: 'Output information about the push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output pusher username and repository information
+        env:
+          PUSHER_USERNAME: ${{ github.event.pusher.username }}
+          REPOSITORY: ${{ github.event.repository }}
+        run: echo $PUSHER_USERNAME $REPOSITORY
+      - run: echo SHA that triggered the workflow is $GITHUB_SHA
