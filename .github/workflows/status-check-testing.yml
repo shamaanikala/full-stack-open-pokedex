@@ -42,7 +42,9 @@ jobs:
     steps:
       - name: Output pusher username and repository information
         env:
-          PUSHER_USERNAME: ${{ github.event.pusher.username }}
-          REPOSITORY: ${{ toJson(github.event.repository) }}
-        run: echo $PUSHER_USERNAME $REPOSITORY
+          # PUSHER_USERNAME: ${{ github.event.pusher.username }} # doesn't work
+          # REPOSITORY: ${{ toJson(github.event.repository) }}
+          PUSHER_USERNAME: ${{ github.actor }}
+          REPOSITORY_FULL_NAME: ${{ github.event.repository.full_name }}
+        run: echo $PUSHER_USERNAME $REPOSITORY_FULL_NAME
       - run: echo SHA that triggered the workflow is ${{ github.sha }}
