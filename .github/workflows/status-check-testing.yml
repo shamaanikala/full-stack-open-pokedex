@@ -1,0 +1,26 @@
+name: Testing Workflow Status Checks
+
+on:
+  push:
+    branches:
+      - 'Ex11.18*'
+
+jobs:
+  succesful_job:
+    name: Testing how to detect that a step succeeds
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo hello
+        run: echo "Hello"
+      - name: Echo if previous step is success
+        if: ${{ success() }}
+        run: echo "Previous step was success!"
+
+  another_job:
+    name: Testing how to detect if a job succeeds
+    runs-on: ubuntu-latest
+    needs: succesful_job
+    if: ${{ success() }}
+    steps:
+      - name: Echo if last steps were succesful
+        run: echo "Previous job was succesful!"
