@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - master
-      - 'Ex11.16-testing'
-  pull_request:
-    branches: [master]
-    types: [opened, synchronize]
+      - 'Ex11.16-testing-2'
+  # pull_request:
+  # branches: [master]
+  # types: [opened, synchronize]
 
 jobs:
   a_test_job:
@@ -26,3 +26,11 @@ jobs:
         env:
           COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
         run: echo "$COMMIT_MESSAGES"
+      - name: commit messages array
+        env:
+          COMMIT_MESSAGES_ARRAY: ${{ join(toJson(github.event.commits.*.message)) }}
+        run: echo "$COMMIT_MESSAGES_ARRAY"
+      - name: 'check contains #skip'
+        env:
+          SKIP_CHECK: ${{ contains(join(toJson(github.event.commits.*.message)), '#skip') }}
+        run: echo Commit messages contain \#skip:$SKIP_CHECK

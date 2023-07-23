@@ -33,7 +33,7 @@ jobs:
           wait-on: http://localhost:5000
   deploy_to_render:
     name: Deploy to Render
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
     runs-on: ubuntu-latest
     needs: simple_deployment_pipeline
     steps:
@@ -45,7 +45,7 @@ jobs:
   tag_release:
     name: Bumb the version number (tag)
     needs: [simple_deployment_pipeline, deploy_to_render]
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
     runs-on: ubuntu-20.04
     permissions:
       contents: write
