@@ -45,4 +45,4 @@ jobs:
           PUSHER_USERNAME: ${{ github.event.pusher.username }}
           REPOSITORY: ${{ github.event.repository }}
         run: echo $PUSHER_USERNAME $REPOSITORY
-      - run: echo SHA that triggered the workflow is $GITHUB_SHA
+      - run: echo SHA that triggered the workflow is ${{ github.sha }}
