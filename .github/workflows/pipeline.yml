@@ -60,9 +60,9 @@ jobs:
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
-          description: Build error
+          description: Build failed
           details: 'Unable to proceed with tests and deployment of commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
-          text: '${{ github.event.repository.full_name }}: build error'
+          text: '${{ github.event.repository.full_name }}: build failed'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: 'build failed: Prevent sending other notifications after this'
         if: ${{ failure() }}
