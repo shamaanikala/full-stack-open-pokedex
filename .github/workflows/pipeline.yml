@@ -65,7 +65,7 @@ jobs:
           text: '${{ github.event.repository.full_name }}: build setup error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: Prevent sending other notifications after this
-        if: ${{ failure() && !env.DISCORD_NOTIFY_SENT }}
+        if: ${{ failure() }}
         run: |
           echo "DISCORD_NOTIFY_SENT=true" >> "$GITHUB_ENV"
       - name: Check style
