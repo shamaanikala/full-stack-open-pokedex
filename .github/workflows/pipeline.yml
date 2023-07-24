@@ -41,7 +41,7 @@ jobs:
       - name: Check style
         run: npm run eslint
       - name: Notify eslint error
-        if: ${{ failure() && !env.BUILD_SETUP_FAIL }}
+        if: ${{ failure() && env.BUILD_SETUP_FAIL == 'false' }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -52,7 +52,7 @@ jobs:
       - name: Build
         run: npm run build
       - name: Notify build error
-        if: ${{ failure() && !env.BUILD_SETUP_FAIL }}
+        if: ${{ failure() && env.BUILD_SETUP_FAIL == 'false' }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -63,7 +63,7 @@ jobs:
       - name: Run tests
         run: npm run test
       - name: Notify jest tests error
-        if: ${{ failure() && !env.BUILD_SETUP_FAIL }}
+        if: ${{ failure() && env.BUILD_SETUP_FAIL == 'false' }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -78,7 +78,7 @@ jobs:
           start: npm run start-prod
           wait-on: http://localhost:5000
       - name: Notify e2e test error
-        if: ${{ failure() && !env.BUILD_SETUP_FAIL }}
+        if: ${{ failure() && env.BUILD_SETUP_FAIL == 'false' }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
