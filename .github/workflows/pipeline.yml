@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
-      DISCORD_NOTIFY_SENT: false
+      DISCORD_NOTIFY_SENT: ${{ false }}
 
     steps:
       - run: echo ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }}
@@ -55,7 +55,7 @@ jobs:
           text: '${{ github.event.repository.full_name }}: build setup error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: Prevent sending other notifications after this
-        if: ${{ failure() }}
+        if: ${{ failure() && !env.DISCORD_NOTIFY_SENT }}
         run: |
           echo "DISCORD_NOTIFY_SENT=true" >> "$GITHUB_ENV"
       - name: Check style
