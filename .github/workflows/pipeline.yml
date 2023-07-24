@@ -55,7 +55,8 @@ jobs:
         run: npmm install
       - run: echo ${{ job.status }}
       - name: Notify Job setup error
-        if: ${{ steps.install_dependencies.outcome == 'failure' && !env.DISCORD_NOTIFY_SENT }}
+        # if: ${{ steps.install_dependencies.outcome == 'failure' && !env.DISCORD_NOTIFY_SENT }}
+        if: ${{ failure() }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
