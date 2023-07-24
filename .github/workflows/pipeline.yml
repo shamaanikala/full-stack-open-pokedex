@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+      DISCORD_NOTIFY_SENT: false
 
     steps:
       - run: echo ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }}
@@ -39,13 +40,15 @@ jobs:
       # env:
       # COMMIT_URL_JSON: ${{ toJson(github.event.commits[0].url) }}
       # run: echo $COMMIT_URL_JSON
+      - name: Fail the workflow on purpose
+        run: echo ${{ github.event.pull_request }}
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
       - name: Install dependencies
         run: npm install
       - name: Notify Job setup error
-        if: ${{ failure() }}
+        if: ${{ failure() && env.DISCORD_NOTIFY_SENT == false }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -53,10 +56,13 @@ jobs:
           details: 'Unable to proceed with testing and building commit: ${{ toJson(github.event.commits[0].url) }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: build setup error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
+      - name: Prevent sending other notifications after this
+        run: |
+          echo "DISCORD_NOTIFY_SENT=true" >> "$GITHUB_ENV"
       - name: Check style
         run: npm run eslint
       - name: Notify eslint error
-        if: ${{ failure() }}
+        if: ${{ failure() && env.DISCORD_NOTIFY_SENT == false }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -67,7 +73,7 @@ jobs:
       - name: Build
         run: npm run build
       - name: Notify build error
-        if: ${{ failure() }}
+        if: ${{ failure() && env.DISCORD_NOTIFY_SENT == false }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -78,7 +84,7 @@ jobs:
       - name: Run tests
         run: npm run test
       - name: Notify jest tests error
-        if: ${{ failure() }}
+        if: ${{ failure() && env.DISCORD_NOTIFY_SENT == false }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -93,7 +99,7 @@ jobs:
           start: npm run start-prod
           wait-on: http://localhost:5000
       - name: Notify e2e test error
-        if: ${{ failure() }}
+        if: ${{ failure() && env.DISCORD_NOTIFY_SENT == false }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
