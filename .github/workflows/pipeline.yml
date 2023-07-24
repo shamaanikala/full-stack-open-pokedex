@@ -18,42 +18,13 @@ jobs:
       BUILD_SETUP_FAIL: ${{ false }}
 
     steps:
-      # - run: echo ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }}
-      # - run: |
-      # echo "BUILD_SETUP_FAIL=false" >> "$GITHUB_ENV"
       - uses: actions/checkout@v3
-      # - run: echo ${{ toJson(github.event.pull_request.head.sha) }}
-      # - name: Test condition
-      #   if: ${{ success() }}
-      #   run: |
-      #     echo ${{ job.status }}
-      #     echo ${{ job.status == 'success' }}
-      #     echo ${{ job.status == 'success' && env.BUILD_SETUP_FAIL }}
-      # - run: echo $COMMIT_URL
-      # - name: echo pull_request (json)
-      #   env:
-      #     COMMITS_JSON: ${{ toJson( github.event.pull_request) }}
-      #   run: echo $COMMITS_JSON
-      # - name: echo pull_request
-      #   env:
-      #     COMMITS: ${{ github.event.pull_request }}
-      #   run: echo $COMMITS
-      # - name: echo commits
-      # env:
-      # COMMIT_URL: ${{ github.event.commits[0].url }}
-      # run: |
-      # echo $COMMIT_URL
-      # echo ${{ github.event.commits[0].url }}
-      # - name: echo commit url (json)
-      # env:
-      # COMMIT_URL_JSON: ${{ toJson(github.event.commits[0].url) }}
-      # run: echo $COMMIT_URL_JSON
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
       - name: Install dependencies
         id: install_dependencies
-        run: npmm install
+        run: npm install
       - run: echo ${{ job.status }}
       - name: Notify Job setup error
         if: ${{ failure() && env.BUILD_SETUP_FAIL == 'false' }}
@@ -72,7 +43,6 @@ jobs:
         run: npm run eslint
       - name: Notify eslint error
         if: ${{ failure() && !env.BUILD_SETUP_FAIL }}
-        # if: ${{ job.status != 'success' && !env.BUILD_SETUP_FAIL }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -95,7 +65,6 @@ jobs:
         run: npm run test
       - name: Notify jest tests error
         if: ${{ failure() && !env.BUILD_SETUP_FAIL }}
-        # if: ${{ failure() }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
