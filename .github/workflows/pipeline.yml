@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
-      BUILD_SETUP_FAIL: ${{ false }}
+      PREVIOUS_STEP_FAILED: ${{ false }}
 
     steps:
       - uses: actions/checkout@v3
@@ -26,7 +26,7 @@ jobs:
         id: install_dependencies
         run: npm install
       - name: Notify Job setup error
-        if: ${{ failure() && env.BUILD_SETUP_FAIL == 'false' }}
+        if: ${{ failure() && env.PREVIOUS_STEP_FAILED == 'false' }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -37,11 +37,11 @@ jobs:
       - name: 'npm install fail: Prevent sending other notifications after this'
         if: ${{ failure() }}
         run: |
-          echo "BUILD_SETUP_FAIL=true" >> "$GITHUB_ENV"
+          echo "PREVIOUS_STEP_FAILED=true" >> "$GITHUB_ENV"
       - name: Check style
         run: npm run eslint
       - name: Notify eslint error
-        if: ${{ failure() && env.BUILD_SETUP_FAIL == 'false' }}
+        if: ${{ failure() && env.PREVIOUS_STEP_FAILED == 'false' }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -52,11 +52,11 @@ jobs:
       - name: 'ESLint error: Prevent sending other notifications after this'
         if: ${{ failure() }}
         run: |
-          echo "BUILD_SETUP_FAIL=true" >> "$GITHUB_ENV"
+          echo "PREVIOUS_STEP_FAILED=true" >> "$GITHUB_ENV"
       - name: Build
         run: npm run build
       - name: Notify build error
-        if: ${{ failure() && env.BUILD_SETUP_FAIL == 'false' }}
+        if: ${{ failure() && env.PREVIOUS_STEP_FAILED == 'false' }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -67,11 +67,11 @@ jobs:
       - name: 'build failed: Prevent sending other notifications after this'
         if: ${{ failure() }}
         run: |
-          echo "BUILD_SETUP_FAIL=true" >> "$GITHUB_ENV"
+          echo "PREVIOUS_STEP_FAILED=true" >> "$GITHUB_ENV"
       - name: Run tests
         run: npm run test
       - name: Notify jest tests error
-        if: ${{ failure() && env.BUILD_SETUP_FAIL == 'false' }}
+        if: ${{ failure() && env.PREVIOUS_STEP_FAILED == 'false' }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -79,6 +79,10 @@ jobs:
           details: 'Unable to proceed with e2e tests and deploying commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: test error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
+      - name: 'tests failed: Prevent sending other notifications after this'
+        if: ${{ failure() }}
+        run: |
+          echo "PREVIOUS_STEP_FAILED=true" >> "$GITHUB_ENV"
       - name: E2E tests
         uses: cypress-io/github-action@v5
         with:
@@ -86,7 +90,7 @@ jobs:
           start: npm run start-prod
           wait-on: http://localhost:5000
       - name: Notify e2e test error
-        if: ${{ failure() && env.BUILD_SETUP_FAIL == 'false' }}
+        if: ${{ failure() && env.PREVIOUS_STEP_FAILED == 'false' }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -94,7 +98,6 @@ jobs:
           details: 'E2E tests failed commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: test error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
-      - run: echo ${{ toJson(github.event.commits) }}
       - name: Notify succesfull build and test action
         if: ${{ success() }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
