@@ -21,6 +21,9 @@ jobs:
       - run: echo ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }}
       - uses: actions/checkout@v3
       - run: echo ${{ toJson(github.event.pull_request.head.sha) }}
+      - run: echo ${{ env.DISCORD_NOTIFY_SENT }}
+      - name: Test condition
+        run: echo ${{ job.status }}
       # - run: echo $COMMIT_URL
       # - name: echo pull_request (json)
       #   env:
