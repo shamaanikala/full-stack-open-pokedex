@@ -89,6 +89,8 @@ jobs:
           text: '${{ github.event.repository.full_name }}: test & build success!'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - run: echo $COMMIT_URL
+      - run: echo ${{ toJson( github.event.commits) }}
+      - run: echo ${{ github.event.commits }}
   deploy_to_render:
     name: Deploy to Render
     if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
