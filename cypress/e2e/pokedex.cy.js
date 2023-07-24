@@ -17,7 +17,7 @@ describe('Pokedex', function () {
     it('contains the correct abilites', function () {
       cy.visit('http://localhost:5000')
       cy.contains('charizard').click()
-      cy.contains('charizard')
+      cy.contains('pikachu')
       cy.get('.pokemon-abilities')
         .should('contain', 'blaze')
         .and('contain', 'solar power')
