@@ -41,7 +41,7 @@ jobs:
       # COMMIT_URL_JSON: ${{ toJson(github.event.commits[0].url) }}
       # run: echo $COMMIT_URL_JSON
       - name: Fail the workflow on purpose
-        run: echo ${{ github.event.pull_request }}
+        run: echo ${{ github.event.pull_requests }}
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
@@ -57,6 +57,7 @@ jobs:
           text: '${{ github.event.repository.full_name }}: build setup error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: Prevent sending other notifications after this
+        if: ${{ failure() }}
         run: |
           echo "DISCORD_NOTIFY_SENT=true" >> "$GITHUB_ENV"
       - name: Check style
