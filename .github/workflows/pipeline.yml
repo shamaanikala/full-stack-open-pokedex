@@ -115,7 +115,7 @@ jobs:
           description: 'Build failed :crying_cat_face:'
           details: 'Broken commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: build || tests failed'
-          webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   deploy_to_render:
     name: Deploy to Render
     if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
