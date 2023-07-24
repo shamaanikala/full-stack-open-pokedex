@@ -15,21 +15,20 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
-      DISCORD_NOTIFY_SENT: ${{ false }}
+      BUILD_SETUP_FAIL: ${{ false }}
 
     steps:
-      - run: echo ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }}
-      - run: |
-          echo "DISCORD_NOTIFY_SENT=false" >> "$GITHUB_ENV"
+      # - run: echo ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }}
+      # - run: |
+      # echo "BUILD_SETUP_FAIL=false" >> "$GITHUB_ENV"
       - uses: actions/checkout@v3
-      - run: echo ${{ toJson(github.event.pull_request.head.sha) }}
-      - run: echo ${{ env.DISCORD_NOTIFY_SENT }}
-      - name: Test condition
-        if: ${{ success() }}
-        run: |
-          echo ${{ job.status }}
-          echo ${{ job.status == 'success' }}
-          echo ${{ job.status == 'success' && env.DISCORD_NOTIFY_SENT }}
+      # - run: echo ${{ toJson(github.event.pull_request.head.sha) }}
+      # - name: Test condition
+      #   if: ${{ success() }}
+      #   run: |
+      #     echo ${{ job.status }}
+      #     echo ${{ job.status == 'success' }}
+      #     echo ${{ job.status == 'success' && env.BUILD_SETUP_FAIL }}
       # - run: echo $COMMIT_URL
       # - name: echo pull_request (json)
       #   env:
@@ -57,8 +56,7 @@ jobs:
         run: npmm install
       - run: echo ${{ job.status }}
       - name: Notify Job setup error
-        # if: ${{ steps.install_dependencies.outcome == 'failure' && !env.DISCORD_NOTIFY_SENT }}
-        if: ${{ failure() && env.DISCORD_NOTIFY_SENT == 'false' }}
+        if: ${{ failure() && env.BUILD_SETUP_FAIL == 'false' }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -69,12 +67,12 @@ jobs:
       - name: Prevent sending other notifications after this
         if: ${{ failure() }}
         run: |
-          echo "DISCORD_NOTIFY_SENT=true" >> "$GITHUB_ENV"
+          echo "BUILD_SETUP_FAIL=true" >> "$GITHUB_ENV"
       - name: Check style
         run: npm run eslint
       - name: Notify eslint error
-        if: ${{ failure() && !env.DISCORD_NOTIFY_SENT }}
-        # if: ${{ job.status != 'success' && !env.DISCORD_NOTIFY_SENT }}
+        if: ${{ failure() && !env.BUILD_SETUP_FAIL }}
+        # if: ${{ job.status != 'success' && !env.BUILD_SETUP_FAIL }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -85,7 +83,7 @@ jobs:
       - name: Build
         run: npm run build
       - name: Notify build error
-        if: ${{ failure() && !env.DISCORD_NOTIFY_SENT }}
+        if: ${{ failure() && !env.BUILD_SETUP_FAIL }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -96,7 +94,7 @@ jobs:
       - name: Run tests
         run: npm run test
       - name: Notify jest tests error
-        if: ${{ failure() && !env.DISCORD_NOTIFY_SENT }}
+        if: ${{ failure() && !env.BUILD_SETUP_FAIL }}
         # if: ${{ failure() }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
@@ -112,7 +110,7 @@ jobs:
           start: npm run start-prod
           wait-on: http://localhost:5000
       - name: Notify e2e test error
-        if: ${{ failure() && !env.DISCORD_NOTIFY_SENT }}
+        if: ${{ failure() && !env.BUILD_SETUP_FAIL }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
