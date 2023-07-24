@@ -7,26 +7,28 @@ on:
   pull_request:
     branches: [master]
     types: [opened, synchronize]
-
+env:
+  COMMIT_BASE_URL: https://github.com/shamaanikala/full-stack-open-pokedex/commit
 jobs:
   simple_deployment_pipeline:
     name: Build and test Pokedex app
     runs-on: ubuntu-20.04
-    # env:
-    # COMMIT_URL: ${{ toJson(github.event.commits[0].url) }}
+    env:
+      COMMIT_SHA: ${{ toJson(github.event.pull_request.head.sha) }}
+
     steps:
-      - run: echo ${{ toJson(github.event.pull_request.head.sha) }}
+      - run: echo ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }}
       - uses: actions/checkout@v3
       - run: echo ${{ toJson(github.event.pull_request.head.sha) }}
       # - run: echo $COMMIT_URL
-      - name: echo pull_request (json)
-        env:
-          COMMITS_JSON: ${{ toJson( github.event.pull_request) }}
-        run: echo $COMMITS_JSON
-      - name: echo pull_request
-        env:
-          COMMITS: ${{ github.event.pull_request }}
-        run: echo $COMMITS
+      # - name: echo pull_request (json)
+      #   env:
+      #     COMMITS_JSON: ${{ toJson( github.event.pull_request) }}
+      #   run: echo $COMMITS_JSON
+      # - name: echo pull_request
+      #   env:
+      #     COMMITS: ${{ github.event.pull_request }}
+      #   run: echo $COMMITS
       # - name: echo commits
       # env:
       # COMMIT_URL: ${{ github.event.commits[0].url }}
