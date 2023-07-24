@@ -19,6 +19,8 @@ jobs:
 
     steps:
       - run: echo ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }}
+      - run: |
+          echo "DISCORD_NOTIFY_SENT=false" >> "$GITHUB_ENV"
       - uses: actions/checkout@v3
       - run: echo ${{ toJson(github.event.pull_request.head.sha) }}
       - run: echo ${{ env.DISCORD_NOTIFY_SENT }}
