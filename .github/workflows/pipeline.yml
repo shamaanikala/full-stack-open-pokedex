@@ -98,15 +98,24 @@ jobs:
           details: 'E2E tests failed commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: e2e tests failed'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
-      # - name: Notify succesfull build and test action
-      #   if: ${{ success() }}
-      #   uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-      #   with:
-      #     severity: info
-      #     description: Build and test action succesfull
-      #     details: 'The commit ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} passed the tests!'
-      #     text: '${{ github.event.repository.full_name }}: test & build success!'
-      #     webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
+      - name: Notify succesfull build and test action
+        if: ${{ success() }}
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        with:
+          severity: info
+          description: 'Build and test action succesfull :smile_cat: '
+          details: 'The commit ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} passed the tests!'
+          text: '${{ github.event.repository.full_name }}: test & build success!'
+          webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
+      - name: Notify failed build and test action
+        if: ${{ failure() }}
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        with:
+          severity: error
+          description: 'Build failed :crying_cat_face:'
+          details: 'Broken commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
+          text: '${{ github.event.repository.full_name }}: build || tests failed'
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   deploy_to_render:
     name: Deploy to Render
     if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
@@ -118,16 +127,24 @@ jobs:
         with:
           render-service-id: ${{ secrets.RENDER_SERVICE_ID }}
           render-api-key: ${{ secrets.RENDER_API_KEY }}
-      - name: Notify deploy action succesful
+      - name: Notify deploy action succesful (own dev discord)
         if: ${{ success() }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: info
-          description: Deploying Pokedéx to render.com!
-          details: |
-            '- deployed to: ${{ vars.RENDER_DEPLOYED_URL }}'
-          text: '${{ github.event.repository.full_name }}: checks passed, deploying...'
+          description: 'Deploying new version of Pokedéx :smile_cat: '
+          details: 'to: ${{ vars.RENDER_DEPLOYED_URL }}'
+          text: Deploying new version of Pokedéx to render.com...
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
+      - name: Notify deploy action succesful (course discord)
+        if: ${{ success() }}
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        with:
+          severity: info
+          description: 'Deploying new version of Pokedéx :smile_cat: '
+          details: 'to: ${{ vars.RENDER_DEPLOYED_URL }}'
+          text: Deploying new version of Pokedéx to render.com...
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     name: Bumb the version number (tag)
     needs: [simple_deployment_pipeline, deploy_to_render]
