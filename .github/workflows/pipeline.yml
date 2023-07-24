@@ -42,6 +42,15 @@ jobs:
         with:
           render-service-id: ${{ secrets.RENDER_SERVICE_ID }}
           render-api-key: ${{ secrets.RENDER_API_KEY }}
+      - name: Notify succesfull deployment action
+        if: ${{ success() }}
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        with:
+          severity: info
+          description: Deployment action succesfull
+          details: 'Deployed to render.com: URL'
+          text: A new version of Pokédex sent to render.com by ${{ github.actor }}
+          webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
   tag_release:
     name: Bumb the version number (tag)
     needs: [simple_deployment_pipeline, deploy_to_render]
