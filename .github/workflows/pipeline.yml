@@ -23,7 +23,11 @@ jobs:
       - run: echo ${{ toJson(github.event.pull_request.head.sha) }}
       - run: echo ${{ env.DISCORD_NOTIFY_SENT }}
       - name: Test condition
-        run: echo ${{ job.status }}
+        if: ${{ success() }}
+        run: |
+          echo ${{ job.status }}
+          echo ${{ job.status == 'success' }}
+          echo ${{ job.status == 'success' && env.DISCORD_NOTIFY_SENT }}
       # - run: echo $COMMIT_URL
       # - name: echo pull_request (json)
       #   env:
@@ -48,6 +52,7 @@ jobs:
           node-version: '16'
       - name: Install dependencies
         run: npmm install
+      - run: echo ${{ job.status }}
       - name: Notify Job setup error
         if: ${{ failure() && !env.DISCORD_NOTIFY_SENT }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
