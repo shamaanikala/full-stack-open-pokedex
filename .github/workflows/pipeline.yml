@@ -17,10 +17,24 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: echo $COMMIT_URL
-      - run: echo ${{ toJson( github.event.commits) }}
-      - run: echo ${{ github.event.commits }}
-      - run: echo ${{ github.event.commits[0].url }}
-      - run: echo ${{ toJson(github.event.commits[0].url) }}
+      - name: echo commits (json)
+        env:
+          COMMITS_JSON: ${{ toJson( github.event.commits) }}
+        run: echo $COMMITS_JSON
+      - name: echo commits
+        env:
+          COMMITS: ${{ github.event.commits }}
+        run: echo $COMMITS
+      - name: echo commits
+        env:
+          COMMIT_URL: ${{ github.event.commits[0].url }}
+        run: |
+          echo $COMMIT_URL
+          echo ${{ github.event.commits[0].url }}
+      - name: echo commit url (json)
+        env:
+          COMMIT_URL_JSON: ${{ toJson(github.event.commits[0].url) }}
+        run: echo $COMMIT_URL_JSON
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
