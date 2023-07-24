@@ -103,7 +103,7 @@ jobs:
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: info
-          description: Build and test action succesfull
+          description: 'Build and test action succesfull :smile_cat: '
           details: 'The commit ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} passed the tests!'
           text: '${{ github.event.repository.full_name }}: test & build success!'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
@@ -112,9 +112,9 @@ jobs:
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
-          description: Build and test action failed
+          description: 'Build failed :crying_cat_face:'
           details: 'Broken commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
-          text: '${{ github.event.repository.full_name }}: build & tests failed'
+          text: '${{ github.event.repository.full_name }}: build || tests failed'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
   deploy_to_render:
     name: Deploy to Render
@@ -132,10 +132,9 @@ jobs:
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: info
-          description: Deploying Pokedéx to render.com!
-          details: |
-            '- deployed to: ${{ vars.RENDER_DEPLOYED_URL }}'
-          text: '${{ github.event.repository.full_name }}: checks passed, deploying...'
+          description: Deploying new version of Pokedéx
+          details: 'to: ${{ vars.RENDER_DEPLOYED_URL }}'
+          text: Deploying new version of Pokedéx to render.com...
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
   tag_release:
     name: Bumb the version number (tag)
