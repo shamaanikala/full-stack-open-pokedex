@@ -12,6 +12,8 @@ jobs:
   simple_deployment_pipeline:
     name: Build and test Pokedex app
     runs-on: ubuntu-20.04
+    env:
+      COMMIT_URL: ${{ toJson(github.event.commits[0].url) }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -76,16 +78,17 @@ jobs:
           details: 'E2E tests failed commit: ${{ toJson(github.event.commits[0].url) }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: test error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
+      - run: echo ${{ toJson(github.event.commits) }}
       - name: Notify succesfull build and test action
         if: ${{ success() }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: info
           description: Build and test action succesfull
-          details: 'The commit ${{ toJson(github.event.commits.*.url) }} passed the tests!'
+          details: 'The commit ${{ github.event.commits[0].url }} passed the tests!'
           text: '${{ github.event.repository.full_name }}: test & build success!'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
-
+      - run: echo $COMMIT_URL
   deploy_to_render:
     name: Deploy to Render
     if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
