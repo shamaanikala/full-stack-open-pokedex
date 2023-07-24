@@ -82,7 +82,7 @@ jobs:
         with:
           severity: info
           description: Build and test action succesfull
-          details: 'The commit ${{ toJson(github.event.commits[0].url) }} passed the tests!'
+          details: 'The commit ${{ toJson(github.event.commits)[0].url }} passed the tests!'
           text: '${{ github.event.repository.full_name }}: test & build success!'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
 
