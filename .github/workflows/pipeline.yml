@@ -19,26 +19,71 @@ jobs:
           node-version: '16'
       - name: Install dependencies
         run: npm install
+      - name: Notify Job setup error
+        if: ${{ failure() }}
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        with:
+          severity: error
+          description: Something went wrong during installing dependencies
+          details: 'Unable to proceed with testing and building commit: ${{ toJson(github.event.commits[0].url) }} by ${{ github.actor }}'
+          text: '${{ github.event.repository.full_name }}: build setup error'
+          webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: Check style
         run: npm run eslint
+      - name: Notify eslint error
+        if: ${{ failure() }}
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        with:
+          severity: error
+          description: Eslint error
+          details: 'Unable to proceed with testing and building commit: ${{ toJson(github.event.commits[0].url) }} by ${{ github.actor }}'
+          text: '${{ github.event.repository.full_name }}: eslint error'
+          webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: Build
         run: npm run build
+      - name: Notify build error
+        if: ${{ failure() }}
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        with:
+          severity: error
+          description: Build error
+          details: 'Unable to proceed with tests and deployment of commit: ${{ toJson(github.event.commits[0].url) }} by ${{ github.actor }}'
+          text: '${{ github.event.repository.full_name }}: build error'
+          webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: Run tests
         run: npm run test
+      - name: Notify jest tests error
+        if: ${{ failure() }}
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        with:
+          severity: error
+          description: Test error
+          details: 'Unable to proceed with e2e tests and deploying commit: ${{ toJson(github.event.commits[0].url) }} by ${{ github.actor }}'
+          text: '${{ github.event.repository.full_name }}: test error'
+          webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: E2E tests
         uses: cypress-io/github-action@v5
         with:
           command: npm run test:e2e
           start: npm run start-prod
           wait-on: http://localhost:5000
+      - name: Notify e2e test error
+        if: ${{ failure() }}
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        with:
+          severity: error
+          description: E2E tests error
+          details: 'E2E tests failed commit: ${{ toJson(github.event.commits[0].url) }} by ${{ github.actor }}'
+          text: '${{ github.event.repository.full_name }}: test error'
+          webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: Notify succesfull build and test action
         if: ${{ success() }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: info
           description: Build and test action succesfull
-          details: 'The commit ${{ toJson(github.event.commits[0]).url }}'
-          text: The Pokédex commit by ${{ github.actor }} passed the tests and was build
+          details: 'The commit ${{ toJson(github.event.commits[0].url) }} passed the tests!'
+          text: '${{ github.event.repository.full_name }}: test & build success!'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
 
   deploy_to_render:
