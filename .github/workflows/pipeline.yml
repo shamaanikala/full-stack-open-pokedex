@@ -75,9 +75,9 @@ jobs:
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
-          description: Test error
+          description: Test failed
           details: 'Unable to proceed with e2e tests and deploying commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
-          text: '${{ github.event.repository.full_name }}: test error'
+          text: '${{ github.event.repository.full_name }}: tests failed'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: 'tests failed: Prevent sending other notifications after this'
         if: ${{ failure() }}
@@ -94,9 +94,9 @@ jobs:
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
-          description: E2E tests error
+          description: E2E tests failed
           details: 'E2E tests failed commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
-          text: '${{ github.event.repository.full_name }}: test error'
+          text: '${{ github.event.repository.full_name }}: e2e tests failed'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: Notify succesfull build and test action
         if: ${{ success() }}
