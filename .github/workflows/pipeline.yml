@@ -25,7 +25,6 @@ jobs:
       - name: Install dependencies
         id: install_dependencies
         run: npm install
-      - run: echo ${{ job.status }}
       - name: Notify Job setup error
         if: ${{ failure() && env.BUILD_SETUP_FAIL == 'false' }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
