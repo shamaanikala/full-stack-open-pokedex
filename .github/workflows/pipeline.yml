@@ -40,13 +40,11 @@ jobs:
       # env:
       # COMMIT_URL_JSON: ${{ toJson(github.event.commits[0].url) }}
       # run: echo $COMMIT_URL_JSON
-      - name: Fail the workflow on purpose
-        run: exit 1
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
       - name: Install dependencies
-        run: npm install
+        run: npmm install
       - name: Notify Job setup error
         if: ${{ failure() && !env.DISCORD_NOTIFY_SENT }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
