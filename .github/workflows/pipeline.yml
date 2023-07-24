@@ -54,7 +54,7 @@ jobs:
         run: npmm install
       - run: echo ${{ job.status }}
       - name: Notify Job setup error
-        if: ${{ failure() && !env.DISCORD_NOTIFY_SENT }}
+        if: ${{ job.status == 'failure' && !env.DISCORD_NOTIFY_SENT }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
@@ -69,7 +69,8 @@ jobs:
       - name: Check style
         run: npm run eslint
       - name: Notify eslint error
-        if: ${{ failure() && !env.DISCORD_NOTIFY_SENT }}
+        # if: ${{ failure() && !env.DISCORD_NOTIFY_SENT }}
+        if: ${{ job.status != 'success' && !env.DISCORD_NOTIFY_SENT }}
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
         with:
           severity: error
