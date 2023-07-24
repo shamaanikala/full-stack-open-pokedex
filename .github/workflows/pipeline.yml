@@ -41,7 +41,7 @@ jobs:
       # COMMIT_URL_JSON: ${{ toJson(github.event.commits[0].url) }}
       # run: echo $COMMIT_URL_JSON
       - name: Fail the workflow on purpose
-        run: echo ${{ github.event.pull_requests }}
+        run: exit 1
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
@@ -53,7 +53,7 @@ jobs:
         with:
           severity: error
           description: Something went wrong during installing dependencies
-          details: 'Unable to proceed with testing and building commit: ${{ toJson(github.event.commits[0].url) }} by ${{ github.actor }}'
+          details: 'Unable to proceed with testing and building commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: build setup error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: Prevent sending other notifications after this
@@ -68,7 +68,7 @@ jobs:
         with:
           severity: error
           description: Eslint error
-          details: 'Unable to proceed with testing and building commit: ${{ toJson(github.event.commits[0].url) }} by ${{ github.actor }}'
+          details: 'Unable to proceed with testing and building commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: eslint error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: Build
@@ -79,7 +79,7 @@ jobs:
         with:
           severity: error
           description: Build error
-          details: 'Unable to proceed with tests and deployment of commit: ${{ toJson(github.event.commits[0].url) }} by ${{ github.actor }}'
+          details: 'Unable to proceed with tests and deployment of commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: build error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: Run tests
@@ -90,7 +90,7 @@ jobs:
         with:
           severity: error
           description: Test error
-          details: 'Unable to proceed with e2e tests and deploying commit: ${{ toJson(github.event.commits[0].url) }} by ${{ github.actor }}'
+          details: 'Unable to proceed with e2e tests and deploying commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: test error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - name: E2E tests
@@ -105,7 +105,7 @@ jobs:
         with:
           severity: error
           description: E2E tests error
-          details: 'E2E tests failed commit: ${{ toJson(github.event.commits[0].url) }} by ${{ github.actor }}'
+          details: 'E2E tests failed commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: test error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
       - run: echo ${{ toJson(github.event.commits) }}
@@ -115,12 +115,9 @@ jobs:
         with:
           severity: info
           description: Build and test action succesfull
-          details: 'The commit ${{ github.event.commits[0].url }} passed the tests!'
+          details: 'The commit ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} passed the tests!'
           text: '${{ github.event.repository.full_name }}: test & build success!'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
-      - run: echo $COMMIT_URL
-      - run: echo ${{ toJson( github.event.commits) }}
-      - run: echo ${{ github.event.commits }}
   deploy_to_render:
     name: Deploy to Render
     if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
