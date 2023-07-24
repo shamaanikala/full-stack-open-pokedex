@@ -15,10 +15,12 @@ jobs:
     env:
       COMMIT_URL: ${{ toJson(github.event.commits[0].url) }}
     steps:
+      - uses: actions/checkout@v3
       - run: echo $COMMIT_URL
       - run: echo ${{ toJson( github.event.commits) }}
       - run: echo ${{ github.event.commits }}
-      - uses: actions/checkout@v3
+      - run: echo ${{ github.event.commits[0].url }}
+      - run: echo ${{ toJson(github.event.commits[0].url) }}
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
