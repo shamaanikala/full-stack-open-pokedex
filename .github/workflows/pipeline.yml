@@ -34,7 +34,7 @@ jobs:
           details: 'Unable to proceed with testing and building commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: build setup error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
-      - name: Prevent sending other notifications after this
+      - name: 'npm install fail: Prevent sending other notifications after this'
         if: ${{ failure() }}
         run: |
           echo "BUILD_SETUP_FAIL=true" >> "$GITHUB_ENV"
@@ -49,6 +49,10 @@ jobs:
           details: 'Unable to proceed with testing and building commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: eslint error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
+      - name: 'ESLint error: Prevent sending other notifications after this'
+        if: ${{ failure() }}
+        run: |
+          echo "BUILD_SETUP_FAIL=true" >> "$GITHUB_ENV"
       - name: Build
         run: npm run build
       - name: Notify build error
