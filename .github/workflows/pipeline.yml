@@ -98,15 +98,24 @@ jobs:
           details: 'E2E tests failed commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: e2e tests failed'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
-      # - name: Notify succesfull build and test action
-      #   if: ${{ success() }}
-      #   uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-      #   with:
-      #     severity: info
-      #     description: Build and test action succesfull
-      #     details: 'The commit ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} passed the tests!'
-      #     text: '${{ github.event.repository.full_name }}: test & build success!'
-      #     webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
+      - name: Notify succesfull build and test action
+        if: ${{ success() }}
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        with:
+          severity: info
+          description: Build and test action succesfull
+          details: 'The commit ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} passed the tests!'
+          text: '${{ github.event.repository.full_name }}: test & build success!'
+          webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
+      - name: Notify failed build and test action
+        if: ${{ failure() }}
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        with:
+          severity: error
+          description: Build and test action failed
+          details: 'Broken commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
+          text: '${{ github.event.repository.full_name }}: build & tests failed'
+          webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
   deploy_to_render:
     name: Deploy to Render
     if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
