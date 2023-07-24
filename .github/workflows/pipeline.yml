@@ -64,6 +64,10 @@ jobs:
           details: 'Unable to proceed with tests and deployment of commit: ${{ env.COMMIT_BASE_URL }}/${{ env.COMMIT_SHA }} by ${{ github.actor }}'
           text: '${{ github.event.repository.full_name }}: build error'
           webhookUrl: ${{ secrets.OMA_DISCORD_WEBHOOK }}
+      - name: 'build failed: Prevent sending other notifications after this'
+        if: ${{ failure() }}
+        run: |
+          echo "BUILD_SETUP_FAIL=true" >> "$GITHUB_ENV"
       - name: Run tests
         run: npm run test
       - name: Notify jest tests error
