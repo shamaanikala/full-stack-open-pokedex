@@ -13,3 +13,9 @@ jobs:
     steps:
       - name: 'Test output'
         run: echo "Testing the GitHub Action Schedule"
+      - name: Ping the deployed Pokédex health check url
+        uses: jtalk/url-health-check-action@f3f7bd79e4a64218eea7caad72796a1443896aeb
+        with:
+          url: ${{ vars.RENDER_DEPLOYED_URL }}/health
+          max-attempts: 5
+          retry-delay: 15s
