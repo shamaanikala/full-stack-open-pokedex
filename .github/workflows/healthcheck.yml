@@ -1,10 +1,7 @@
-name: Ping Pokedex Health Check
+name: Ping PokéDex Health Check
 
 on:
-  push:
-
   schedule:
-    - cron: '27,30,33 * * * *'
     - cron: '00,15,30,45 * * * *'
 
 jobs:
