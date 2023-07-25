@@ -1,0 +1,15 @@
+name: Ping Pokedex Health Check
+
+on:
+  push:
+
+  schedule:
+    - cron: '27,30,33 * * * *'
+    - cron: '00,15,30,45 * * * *'
+
+jobs:
+  test_schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Test output'
+        run: echo "Testing the GitHub Action Schedule"
